@@ -1,5 +1,6 @@
+import json
+
 from download import YoutubeDowonloader
-from typing import Dict
 import boto3
 from botocore.exceptions import NoCredentialsError
 
@@ -8,9 +9,10 @@ s3_client = boto3.client('s3')
 bucket_name = 'youtube-mp3-image'
 
 def lambda_handler(event, context):
+    body = json.loads(event["body"])
     # pdf_file: str, google_drive_id: str, service_account_file: str
     URL_LIST = [
-        "https://www.youtube.com/watch?v=oa9y4HbNKcw",
+        body["url"],
         # Add more URLs as needed
     ]
 
@@ -22,7 +24,12 @@ def lambda_handler(event, context):
     if uploaded_file_name:
         file_url = get_s3_object_url(bucket_name, uploaded_file_name)
         print("Uploaded file URL:", file_url)
-        return {"file_name": file_url}
+        json_data = json.dumps({"file_name": file_url})
+
+        return {
+            'statusCode': 200,
+            'body': json_data
+        }
 
 
 def get_s3_object_url(bucket, object_name):
