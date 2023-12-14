@@ -20,6 +20,9 @@ class YoutubeDowonloader:
             ],
             "outtmpl": self.output_path,
         }
+        self.thumbnail = ""
+        self.title = ""
+
 
 
 
@@ -30,5 +33,7 @@ class YoutubeDowonloader:
             urls (list): list of urls
         """
         with YoutubeDL(self.ydl_opts) as ydl:
-            result = ydl.download(url_list)
-            print(self.ydl_opts["outtmpl"])
+            _ = ydl.download(url_list)
+            info_dict = ydl.extract_info(url_list[0], download=False)
+            self.title = info_dict.get('title', None)
+            self.thumbnail = info_dict.get('thumbnail', None)

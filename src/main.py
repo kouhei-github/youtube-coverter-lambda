@@ -1,4 +1,5 @@
 import json
+import os
 
 from download import YoutubeDowonloader
 import boto3
@@ -9,7 +10,10 @@ s3_client = boto3.client('s3')
 bucket_name = 'youtube-mp3-image'
 
 def lambda_handler(event, context):
-    body = json.loads(event["body"])
+    if __name__ == "__main__":
+        body = {"url": "https://www.youtube.com/watch?v=ps-pHi81S_Q"}
+    else:
+        body = json.loads(event["body"])
     # pdf_file: str, google_drive_id: str, service_account_file: str
     URL_LIST = [
         body["url"],
@@ -18,16 +22,21 @@ def lambda_handler(event, context):
 
     yd = YoutubeDowonloader()
     yd.download(URL_LIST)
+
     file_path = f'{yd.output_path}.mp3'
 
     uploaded_file_name = upload_file_to_s3(file_path, bucket_name, file_path.replace("/tmp/", ""))
     if uploaded_file_name:
         file_url = get_s3_object_url(bucket_name, uploaded_file_name)
-        print("Uploaded file URL:", file_url)
-        json_data = json.dumps({"file_name": file_url})
-
+        json_data = json.dumps({"file_name": file_url, "thumbnail": yd.thumbnail, "title": yd.title})
+        os.remove(file_path)
         return {
             'statusCode': 200,
+            "headers": {
+                "Access-Control-Allow-Headers" : "Content-Type",
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "POST"
+            },
             'body': json_data
         }
 
