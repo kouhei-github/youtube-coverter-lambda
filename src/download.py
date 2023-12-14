@@ -22,7 +22,8 @@ class YoutubeDowonloader:
         }
         self.thumbnail = ""
         self.title = ""
-
+        self.duration = ""
+        self.filesize = ""
 
 
 
@@ -37,3 +38,5 @@ class YoutubeDowonloader:
             info_dict = ydl.extract_info(url_list[0], download=False)
             self.title = info_dict.get('title', None)
             self.thumbnail = info_dict.get('thumbnail', None)
+            self.duration = info_dict.get('duration', None)
+            self.filesize = info_dict.get('filesize', None)

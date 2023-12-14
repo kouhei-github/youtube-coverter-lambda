@@ -28,7 +28,13 @@ def lambda_handler(event, context):
     uploaded_file_name = upload_file_to_s3(file_path, bucket_name, file_path.replace("/tmp/", ""))
     if uploaded_file_name:
         file_url = get_s3_object_url(bucket_name, uploaded_file_name)
-        json_data = json.dumps({"file_name": file_url, "thumbnail": yd.thumbnail, "title": yd.title})
+        json_data = json.dumps({
+            "file_name": file_url,
+            "thumbnail": yd.thumbnail,
+            "title": yd.title,
+            "duration": yd.duration,
+            "filesize": yd.filesize
+        })
         os.remove(file_path)
         return {
             'statusCode': 200,
