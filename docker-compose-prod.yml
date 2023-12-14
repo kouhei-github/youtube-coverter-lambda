@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  python:
+    container_name: python-youtube-converter-pro
+    image: "python-youtube-converter-prod"
+    build:
+      context: .
+      dockerfile: ./container/Dockerfile
+    working_dir: /var/task
